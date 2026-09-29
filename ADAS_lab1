@@ -1,0 +1,38 @@
+import cv2
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.applications import MobileNetV2
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+
+# Load MobileNetV2
+base_model = MobileNetV2(
+    weights="imagenet",
+    include_top=False,
+    input_shape=(224, 224, 3)
+)
+
+# Load image
+image = cv2.imread("test_image.jpg")
+
+# Resize image
+img = cv2.resize(image, (224, 224))
+
+# Prepare image
+x = np.expand_dims(img, axis=0)
+x = preprocess_input(x)
+
+# MobileNetV2 prediction
+features = base_model.predict(x)
+
+print("MobileNetV2 feature shape:", features.shape)
+
+# Calculate brightness
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+brightness = np.mean(gray)
+
+print("Image Brightness:", brightness)
+
+if brightness < 80:
+    print("Low Brightness")
+else:
+    print("Normal Brightness")
